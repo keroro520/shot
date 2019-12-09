@@ -54,7 +54,7 @@ impl Client {
             return None;
         };
         for jsonrpc in self.ckb_nodes.iter().skip(1) {
-            if jsonrpc
+            if !jsonrpc
                 .get_header_by_number(block_number)
                 .map(Into::<HeaderView>::into)
                 .map(|header: HeaderView| header.hash() == safe.hash())

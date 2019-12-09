@@ -26,10 +26,18 @@ impl Collector {
         let mut unspent = Unspent::new();
         for block_number in 1..=tip {
             // FIXME 0..=tip
-            let block = self.client.get_safe_block(block_number);
+            let block = self
+                .client
+                .get_block_by_number(block_number)
+                .unwrap()
+                .into();
             let dead_out_points = self.dead_out_points(&block);
             let live_cells = self.live_cells(&block);
             unspent.update(&dead_out_points, live_cells);
+
+            if block_number % 1000 == 0 {
+                println!("#{}", block_number);
+            }
         }
         for (_, cell) in unspent.into_iter() {
             self.sender.send(cell).unwrap();
