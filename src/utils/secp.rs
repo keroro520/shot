@@ -28,7 +28,7 @@ impl Secp {
             .build()
     }
 
-    pub fn init(rpc_urls: &Vec<String>) -> Self {
+    pub fn init(rpc_urls: &[String]) -> Self {
         let client = Client::init(rpc_urls);
         let block: BlockView = client.get_safe_block(0);
         let group_transaction = &block.transactions()[1];

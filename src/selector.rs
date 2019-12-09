@@ -36,16 +36,16 @@ impl Selector {
                 }
 
                 immatures = immatures[truncate..].to_vec();
-                immatures.first().map(|immature| {
-                    anchor = immature.block_number;
-                });
+                if let Some(first) = immatures.first() {
+                    anchor = first.block_number;
+                }
             }
 
             if cell.tx_index == 0 {
                 immatures.push(cell);
-                immatures.first().map(|immature| {
-                    anchor = immature.block_number;
-                });
+                if let Some(first) = immatures.first() {
+                    anchor = first.block_number;
+                }
             } else {
                 self.maybe_send(&mut pending, cell);
             }

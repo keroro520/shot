@@ -52,7 +52,7 @@ impl Config {
         }
 
         if config.chain.rpc_urls.is_empty() {
-            return Err(format!("ckb_nodes is empty"));
+            return Err("ckb_nodes is empty".to_string());
         }
         Ok(config)
     }

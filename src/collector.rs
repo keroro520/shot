@@ -11,7 +11,7 @@ pub struct Collector {
 }
 
 impl Collector {
-    pub fn new(user: User, rpc_urls: &Vec<String>, sender: Sender<LiveCell>) -> Self {
+    pub fn new(user: User, rpc_urls: &[String], sender: Sender<LiveCell>) -> Self {
         let client = Client::init(rpc_urls);
         Self {
             client,

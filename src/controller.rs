@@ -16,7 +16,7 @@ pub struct Controller {
 impl Controller {
     pub fn new(
         user: User,
-        rpc_urls: &Vec<String>,
+        rpc_urls: &[String],
         receiver: Receiver<TransactionView>,
         config: ControllerConfig,
     ) -> Self {
