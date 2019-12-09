@@ -66,7 +66,7 @@ impl Constructor {
                 .cell_dep(cell_dep)
                 .build();
 
-            let _ = self.sender.send(raw_transaction);
+            self.sender.send(raw_transaction).unwrap();
         }
     }
 }

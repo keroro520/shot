@@ -39,7 +39,7 @@ impl Client {
 
     pub fn get_safe_tip(&self) -> BlockNumber {
         let tip = self.ckb_nodes[0].get_tip_block_number();
-        for block_number in tip..=0 {
+        for block_number in (0..=tip).rev() {
             if self.get_safe_header(block_number).is_some() {
                 return block_number;
             }

@@ -2,7 +2,7 @@ use ckb_types::core::BlockNumber;
 use ckb_types::packed::{CellOutput, OutPoint};
 use std::collections::HashMap;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct LiveCell {
     pub cell_output: CellOutput,
     pub out_point: OutPoint,
@@ -10,6 +10,7 @@ pub struct LiveCell {
     pub block_number: BlockNumber,
 }
 
+#[derive(Clone, Debug)]
 pub struct Unspent {
     inner: HashMap<OutPoint, LiveCell>,
 }

@@ -1,6 +1,8 @@
 use crate::config::setup;
 use crate::utils::{Secp, User};
 use crossbeam_channel::bounded;
+use std::thread::sleep;
+use std::time::Duration;
 
 mod collector;
 mod config;
@@ -11,7 +13,8 @@ mod utils;
 
 fn main() {
     let config = attempt(setup());
-    let _ = ckb_logger::init(config.logger.clone()).unwrap();
+    // let _ = ckb_logger::init(config.logger.clone()).unwrap();
+    println!("Init");
 
     let secp = Secp::init(&config.chain.rpc_urls);
     let alice = User::new(config.alice.clone(), secp);
@@ -28,10 +31,13 @@ fn main() {
         raw_tx_receiver,
         config.controller.clone(),
     );
-    let _ = collector.serve();
     let _ = selector.serve();
     let _ = constructor.serve();
     let _ = controller.serve();
+    let _ = collector.serve();
+    loop {
+        sleep(Duration::from_secs(10));
+    }
 }
 
 fn attempt<T>(r: Result<T, String>) -> T {

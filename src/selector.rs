@@ -25,9 +25,9 @@ impl Selector {
 
         while let Ok(cell) = self.receiver.recv() {
             if anchor + CELLBASE_MATURITY <= cell.block_number {
-                let mut truncate = 0;
+                let mut truncate = immatures.len();
                 for (i, immature) in immatures.iter().enumerate() {
-                    if immature.block_number + CELLBASE_MATURITY >= cell.block_number {
+                    if immature.block_number + CELLBASE_MATURITY <= cell.block_number {
                         self.maybe_send(&mut pending, immature.clone());
                     } else {
                         truncate = i;
@@ -57,13 +57,13 @@ impl Selector {
             let total_capacity = Unpack::<u64>::unpack(&p.cell_output.capacity())
                 + Unpack::<u64>::unpack(&cell.cell_output.capacity());
             assert!(total_capacity >= MIN_INPUT_CAPACITY);
-            let _ = self.sender.send(vec![p, cell]);
+            self.sender.send(vec![p, cell]).unwrap();
         } else {
             let total_capacity = Unpack::<u64>::unpack(&cell.cell_output.capacity());
             if total_capacity < MIN_INPUT_CAPACITY {
                 *pending = Some(cell);
             } else {
-                let _ = self.sender.send(vec![cell]);
+                self.sender.send(vec![cell]).unwrap();
             }
         }
     }

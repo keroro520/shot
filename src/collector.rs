@@ -24,14 +24,15 @@ impl Collector {
     pub fn serve(self) -> JoinHandle<()> {
         let tip = self.client.get_safe_tip();
         let mut unspent = Unspent::new();
-        for block_number in 0..=tip {
+        for block_number in 1..=tip {
+            // FIXME 0..=tip
             let block = self.client.get_safe_block(block_number);
             let dead_out_points = self.dead_out_points(&block);
             let live_cells = self.live_cells(&block);
             unspent.update(&dead_out_points, live_cells);
         }
         for (_, cell) in unspent.into_iter() {
-            let _ = self.sender.send(cell);
+            self.sender.send(cell).unwrap();
         }
 
         spawn(move || self.do_serve(tip))
@@ -43,7 +44,7 @@ impl Collector {
             let block = self.client.get_safe_block(block_number);
             let live_cells = self.live_cells(&block);
             for cell in live_cells.into_iter() {
-                let _ = self.sender.send(cell);
+                self.sender.send(cell).unwrap();
             }
             block_number += 1;
         }
