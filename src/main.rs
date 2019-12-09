@@ -12,7 +12,7 @@ mod selector;
 mod utils;
 
 fn main() {
-    let config = attempt(setup());
+    let config = attempt(setup(), "setup");
     // let _ = ckb_logger::init(config.logger.clone()).unwrap();
     println!("Init");
 
@@ -40,10 +40,10 @@ fn main() {
     }
 }
 
-fn attempt<T>(r: Result<T, String>) -> T {
+fn attempt<T>(r: Result<T, String>, msg: &str) -> T {
     match r {
         Err(err) => {
-            eprintln!("{:?}", err);
+            eprintln!("{} {:?}", msg, err);
             exit();
             unreachable!()
         }

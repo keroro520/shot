@@ -80,6 +80,9 @@ impl Controller {
     }
 
     fn send_transaction(&self, transaction: TransactionView) {
-        self.client.send_transaction(transaction.data().into());
+        let index = transaction.hash().nth0().as_slice()[0] as usize % self.client.num_nodes();
+        self.client
+            .get(index)
+            .send_transaction(transaction.data().into());
     }
 }

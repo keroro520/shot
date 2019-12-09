@@ -27,6 +27,14 @@ impl Client {
         }
     }
 
+    pub fn num_nodes(&self) -> usize {
+        self.ckb_nodes.len()
+    }
+
+    pub fn get(&self, index: usize) -> &Jsonrpc {
+        &self.ckb_nodes[index]
+    }
+
     pub fn get_safe_block(&self, block_number: BlockNumber) -> BlockView {
         loop {
             if let Some(header) = self.get_safe_header(block_number) {
