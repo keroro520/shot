@@ -81,8 +81,10 @@ impl Controller {
 
     fn send_transaction(&self, transaction: TransactionView) {
         let index = transaction.hash().nth0().as_slice()[0] as usize % self.client.num_nodes();
-        self.client
+        // TODO handle PoolTransactionDuplicated
+        let _ = self
+            .client
             .get(index)
-            .send_transaction(transaction.data().into());
+            .send_transaction_result(transaction.data().into());
     }
 }
