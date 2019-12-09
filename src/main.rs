@@ -1,3 +1,51 @@
+use crate::config::setup;
+use crate::utils::{Secp, User};
+use crossbeam_channel::bounded;
+
+mod collector;
+mod config;
+mod constructor;
+mod controller;
+mod selector;
+mod utils;
+
 fn main() {
-    println!("Hello, world!");
+    let config = attempt(setup());
+    let _ = ckb_logger::init(config.logger.clone()).unwrap();
+
+    let secp = Secp::init(&config.chain.rpc_urls);
+    let alice = User::new(config.alice.clone(), secp);
+    let (cell_sender, cell_receiver) = bounded(10000);
+    let (inputs_sender, inputs_receiver) = bounded(10000);
+    let (raw_tx_sender, raw_tx_receiver) = bounded(10000);
+
+    let collector = collector::Collector::new(alice.clone(), &config.chain.rpc_urls, cell_sender);
+    let selector = selector::Selector::new(cell_receiver, inputs_sender);
+    let constructor = constructor::Constructor::new(alice.clone(), inputs_receiver, raw_tx_sender);
+    let controller = controller::Controller::new(
+        alice,
+        &config.chain.rpc_urls,
+        raw_tx_receiver,
+        config.controller.clone(),
+    );
+    let _ = collector.serve();
+    let _ = selector.serve();
+    let _ = constructor.serve();
+    let _ = controller.serve();
+}
+
+fn attempt<T>(r: Result<T, String>) -> T {
+    match r {
+        Err(err) => {
+            eprintln!("{:?}", err);
+            exit();
+            unreachable!()
+        }
+        Ok(t) => t,
+    }
+}
+
+fn exit() {
+    ckb_logger::flush();
+    std::process::exit(1);
 }
