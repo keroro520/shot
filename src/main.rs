@@ -24,7 +24,12 @@ fn main() {
 
     let collector = collector::Collector::new(alice.clone(), &config.chain.rpc_urls, cell_sender);
     let selector = selector::Selector::new(cell_receiver, inputs_sender);
-    let constructor = constructor::Constructor::new(alice.clone(), inputs_receiver, raw_tx_sender);
+    let constructor = constructor::Constructor::new(
+        alice.clone(),
+        config.constructor.clone(),
+        inputs_receiver,
+        raw_tx_sender,
+    );
     let controller = controller::Controller::new(
         alice,
         &config.chain.rpc_urls,

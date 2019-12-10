@@ -11,13 +11,18 @@ pub struct Config {
     pub alice: String,
     pub logger: LoggerConfig,
     pub chain: ChainConfig,
+    pub constructor: ConstructorConfig,
     pub controller: ControllerConfig,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct ChainConfig {
-    pub fee_rate: u64,
     pub rpc_urls: Vec<String>,
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone)]
+pub struct ConstructorConfig {
+    pub fee_rate: u64,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
