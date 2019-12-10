@@ -2,7 +2,8 @@ use crate::utils::{Client, LiveCell, Unspent, User};
 use ckb_types::core::{BlockNumber, BlockView};
 use ckb_types::packed::OutPoint;
 use crossbeam_channel::Sender;
-use std::thread::{spawn, JoinHandle};
+use std::thread::{sleep, spawn, JoinHandle};
+use std::time::Duration;
 
 pub struct Collector {
     user: User,
@@ -49,6 +50,12 @@ impl Collector {
     fn do_serve(self, from: BlockNumber) {
         let mut block_number = from + 1;
         loop {
+            let tip: u64 = self.client.get_tip_block_number();
+            if block_number + 3 < tip {
+                sleep(Duration::from_secs(1));
+                continue;
+            }
+
             let block = self.client.get_safe_block(block_number);
             let live_cells = self.live_cells(&block);
             for cell in live_cells.into_iter() {
