@@ -67,11 +67,20 @@ impl Controller {
             blake2b.finalize(&mut message);
 
             let signature = self.user.sign_recoverable(H256::from(message));
-            WitnessArgs::new_builder()
-                .lock(Some(Bytes::from(signature.serialize())).pack())
-                .build()
-                .as_bytes()
-                .pack()
+            if let Some(witness) = transaction.witnesses().get(0) {
+                WitnessArgs::new_unchecked(witness.unpack())
+                    .as_builder()
+                    .lock(Some(Bytes::from(signature.serialize())).pack())
+                    .build()
+                    .as_bytes()
+                    .pack()
+            } else {
+                WitnessArgs::new_builder()
+                    .lock(Some(Bytes::from(signature.serialize())).pack())
+                    .build()
+                    .as_bytes()
+                    .pack()
+            }
         };
         transaction
             .as_advanced_builder()
