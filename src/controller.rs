@@ -34,9 +34,8 @@ impl Controller {
     }
 
     fn do_serve(self) {
-        // TODO
-        let tps = (self.config.tps * 1_000_000_000.0) as u32;
-        let gap = Duration::from_secs(1_000_000_000) / tps;
+        let tps = (self.config.tps * 1_000.0) as u32;
+        let gap = Duration::from_secs(1_000) / tps;
         let mut last_sent = Instant::now();
         while let Ok(raw_transaction) = self.receiver.recv() {
             let transaction = self.sign_transaction(raw_transaction);
