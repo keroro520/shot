@@ -82,10 +82,13 @@ impl Constructor {
         let size = transaction.data().serialized_size_in_block() as u64 + 100; // 100 is an estimate value of signed witness
         let fee = size * self.config.fee_rate / 1000; // 1000 = 1KB
         if input_capacities < outputs_count * MIN_OUTPUT_CAPACITY + fee {
+            let mut outputs_data: Vec<_> = transaction.outputs_data().into_iter().collect();
             outputs.pop().unwrap();
+            outputs_data.pop().unwrap();
             let transaction = transaction
                 .as_advanced_builder()
                 .set_outputs(outputs)
+                .set_outputs_data(outputs_data)
                 .build();
             return self.construct_with_fee(input_capacities, transaction);
         }
