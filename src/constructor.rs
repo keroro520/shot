@@ -41,6 +41,7 @@ impl Constructor {
                 .sum::<u64>();
             let raw_transaction = self.construct_without_fee(input_capacities, cells);
             let raw_transaction = self.construct_with_fee(input_capacities, raw_transaction);
+            println!("[Constructor] construct 1 transaction");
             self.sender.send(raw_transaction).unwrap();
         }
     }

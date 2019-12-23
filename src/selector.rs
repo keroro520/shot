@@ -25,6 +25,7 @@ impl Selector {
 
         while let Ok(cell) = self.receiver.recv() {
             if anchor + CELLBASE_MATURITY <= cell.block_number {
+                println!("[Selector] matured trigger #{}", cell.block_number);
                 let mut truncate = immatures.len();
                 for (i, immature) in immatures.iter().enumerate() {
                     if immature.block_number + CELLBASE_MATURITY <= cell.block_number {
@@ -42,6 +43,10 @@ impl Selector {
             }
 
             if cell.tx_index == 0 {
+                println!(
+                    "[Selector] received cellbase cell from #{}",
+                    cell.block_number
+                );
                 immatures.push(cell);
                 if let Some(first) = immatures.first() {
                     anchor = first.block_number;
@@ -57,12 +62,21 @@ impl Selector {
             let total_capacity = Unpack::<u64>::unpack(&p.cell_output.capacity())
                 + Unpack::<u64>::unpack(&cell.cell_output.capacity());
             assert!(total_capacity >= MIN_INPUT_CAPACITY);
+            println!(
+                "[Selector] selectd 2 cells, total_capacity {}",
+                total_capacity
+            );
             self.sender.send(vec![p, cell]).unwrap();
         } else {
             let total_capacity = Unpack::<u64>::unpack(&cell.cell_output.capacity());
             if total_capacity < MIN_INPUT_CAPACITY {
+                println!("[Selector] selected failed, pending = {}", total_capacity);
                 *pending = Some(cell);
             } else {
+                println!(
+                    "[Selector] selectd 1 cell, total_capacity {}",
+                    total_capacity
+                );
                 self.sender.send(vec![cell]).unwrap();
             }
         }

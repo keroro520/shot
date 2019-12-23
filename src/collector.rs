@@ -58,6 +58,12 @@ impl Collector {
 
             let block = self.client.get_safe_block(block_number);
             let live_cells = self.live_cells(&block);
+
+            println!(
+                "[Collector] #{} live_cells.len: {}",
+                block_number,
+                live_cells.len()
+            );
             for cell in live_cells.into_iter() {
                 self.sender.send(cell).unwrap();
             }

@@ -39,6 +39,7 @@ impl Controller {
         let mut last_sent = Instant::now();
         while let Ok(raw_transaction) = self.receiver.recv() {
             let transaction = self.sign_transaction(raw_transaction);
+            println!("[Controller] send 1 transaction");
             self.send_transaction(transaction);
 
             let elapsed = last_sent.elapsed();
