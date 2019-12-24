@@ -32,6 +32,8 @@ impl Unspent {
     }
 
     pub fn into_iter(self) -> impl IntoIterator<Item = (OutPoint, LiveCell)> {
-        self.inner.into_iter()
+        let mut vec = self.inner.into_iter().collect::<Vec<_>>();
+        vec.sort_by(|a, b| a.1.block_number.cmp(&b.1.block_number));
+        vec.into_iter()
     }
 }
